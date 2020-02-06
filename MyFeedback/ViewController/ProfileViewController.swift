@@ -14,7 +14,6 @@ class ProfileViewController: UIViewController {
     @IBOutlet weak var lblFirstName: UILabel!
     @IBOutlet weak var lblLastName: UILabel!
     @IBOutlet weak var lblPassport: UILabel!
-    var imageName: String = "profile.png"
     var users = [User]()
     
     private let appDelegate = UIApplication.shared.delegate as! AppDelegate
@@ -30,7 +29,7 @@ class ProfileViewController: UIViewController {
         do {
             users = try context.fetch(User.fetchRequest())
             if(!users.isEmpty){
-                getImage(imageName: imageName)
+                getImage(imageName: users[0].image ?? "")
                 lblFirstName.text = users[0].firstName
                 lblLastName.text = users[0].lastName
                 lblPassport.text = String(users[0].passport ?? "")
@@ -51,8 +50,14 @@ class ProfileViewController: UIViewController {
            
            if fileManager.fileExists(atPath: imagePath){
                imgProfile.image = UIImage(contentsOfFile: imagePath)
+                imgProfile.setNeedsDisplay()
            }else{
                print("Image is missing")
            }
        }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        //hide bottombar when pushing edit profile segue
+        //self.hidesBottomBarWhenPushed = true
+    }
 }

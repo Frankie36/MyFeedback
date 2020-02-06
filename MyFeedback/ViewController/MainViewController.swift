@@ -14,22 +14,22 @@ class MainViewController: UITabBarController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        var users = [User]()
+//        var users = [User]()
         
         // Do any additional setup after loading the view.
-        do {
-            users = try context.fetch(User.fetchRequest())
-            if(users.isEmpty){
-                dismiss(animated: true, completion: nil)
-                //add profile details
-                let vc = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "vcEditProfile") as? EditProfileViewController
-                
-                self.navigationController?.pushViewController(vc!, animated: true)
-                
-            }
-        } catch let error as NSError {
-            print("Could not fetch. \(error), \(error.userInfo)")
-        }
+//        do {
+//            users = try context.fetch(User.fetchRequest())
+//            if(users.isEmpty){
+//                dismiss(animated: true, completion: nil)
+//                //add profile details
+//                let vc = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "vcEditProfile") as? EditProfileViewController
+//                
+//                self.navigationController?.pushViewController(vc!, animated: true)
+//                
+//            }
+//        } catch let error as NSError {
+//            print("Could not fetch. \(error), \(error.userInfo)")
+//        }
     }
     
     

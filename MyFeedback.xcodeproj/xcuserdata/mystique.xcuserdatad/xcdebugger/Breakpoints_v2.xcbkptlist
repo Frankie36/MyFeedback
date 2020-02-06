@@ -7,48 +7,48 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "E6D9ECDB-7391-42BC-A4F7-5738427AB65B"
-            shouldBeEnabled = "Yes"
+            uuid = "E76E1EFD-FF23-44D0-A2EA-66EA6896B384"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "MyFeedback/MainViewController.swift"
+            filePath = "MyFeedback/EditProfileViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "22"
-            endingLineNumber = "22"
-            landmarkName = "viewDidLoad()"
+            startingLineNumber = "85"
+            endingLineNumber = "85"
+            landmarkName = "imagePickerController(_:didFinishPickingMediaWithInfo:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "DB3CC623-BF20-4966-AF90-4A140B157101"
-            shouldBeEnabled = "Yes"
+            uuid = "6C3D88CE-19C1-4FDE-BA50-5A05D30B2D76"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "MyFeedback/MainViewController.swift"
+            filePath = "MyFeedback/EditProfileViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "29"
-            endingLineNumber = "29"
-            landmarkName = "viewDidLoad()"
+            startingLineNumber = "103"
+            endingLineNumber = "103"
+            landmarkName = "saveImage(imageName:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "30245946-E85D-4EA1-A53B-9E0AC582DEA3"
-            shouldBeEnabled = "Yes"
+            uuid = "200F4C16-16B6-4CCE-B0CE-B0082B3D7962"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "MyFeedback/MainViewController.swift"
+            filePath = "MyFeedback/EditProfileViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "31"
-            endingLineNumber = "31"
-            landmarkName = "viewDidLoad()"
+            startingLineNumber = "104"
+            endingLineNumber = "104"
+            landmarkName = "saveImage(imageName:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
