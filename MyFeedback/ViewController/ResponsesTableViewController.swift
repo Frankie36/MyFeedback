@@ -18,7 +18,7 @@ class ResponsesTableViewController: UITableViewController, ReachabilityObserverD
     private let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     var responses = [CustomQuery]()
     var vSpinner: UIView?
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -43,29 +43,29 @@ class ResponsesTableViewController: UITableViewController, ReachabilityObserverD
     }
     
     private func initData(){
-         var users = [User]()
-         do {
-             users = try context.fetch(User.fetchRequest())
-             if(users.isEmpty){
-                 dismiss(animated: true, completion: nil)
-                 //add profile details
-                 let vc = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "vcEditProfile") as? EditProfileViewController
-                 
-                 vc?.hidesBottomBarWhenPushed=true
-                 self.navigationController?.pushViewController(vc!, animated: true)
-                 
-             }else{
-                 //get survey data
-                 do{
-                     responses = try context.fetch(CustomQuery.fetchRequest())
-                 }catch let error as NSError {
-                     print("Could not fetch queries. \(error), \(error.userInfo)")
-                 }
-             }
-         } catch let error as NSError {
-             print("Could not fetch users. \(error), \(error.userInfo)")
-         }
-     }
+        var users = [User]()
+        do {
+            users = try context.fetch(User.fetchRequest())
+            if(users.isEmpty){
+                dismiss(animated: true, completion: nil)
+                //add profile details
+                let vc = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "vcEditProfile") as? EditProfileViewController
+                
+                vc?.hidesBottomBarWhenPushed=true
+                self.navigationController?.pushViewController(vc!, animated: true)
+                
+            }else{
+                //get survey data
+                do{
+                    responses = try context.fetch(CustomQuery.fetchRequest())
+                }catch let error as NSError {
+                    print("Could not fetch queries. \(error), \(error.userInfo)")
+                }
+            }
+        } catch let error as NSError {
+            print("Could not fetch users. \(error), \(error.userInfo)")
+        }
+    }
     
     // MARK: - Table view data source
     
@@ -120,34 +120,34 @@ class ResponsesTableViewController: UITableViewController, ReachabilityObserverD
     
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-    
+        
     }
     
-     // Override to support conditional editing of the table view.
-     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-     // Return false if you do not want the specified item to be editable.
-     return true
-     }
+    // Override to support conditional editing of the table view.
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        // Return false if you do not want the specified item to be editable.
+        return true
+    }
     
     
-     // Override to support editing the table view.
-     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-     if editingStyle == .delete {
-        switch deleteResponse(position: indexPath.row) {
-        case 1:
-            // Remove item from existing list
-            responses.remove(at: indexPath.row)
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-            showToast(message: "Response Deleted", seconds: ToastTime)
-        default:
-            showToast(message: "Response could't be deleted", seconds: ToastTime)
+    // Override to support editing the table view.
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            switch deleteResponse(position: indexPath.row) {
+            case 1:
+                // Remove item from existing list
+                responses.remove(at: indexPath.row)
+                // Delete the row from the data source
+                tableView.deleteRows(at: [indexPath], with: .fade)
+                showToast(message: "Response Deleted", seconds: ToastTime)
+            default:
+                showToast(message: "Response could't be deleted", seconds: ToastTime)
+            }
+            
+        } else if editingStyle == .insert {
+            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
         }
-        
-     } else if editingStyle == .insert {
-     // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-     }
-     }
+    }
     
     //MARK: Lifecycle
     required init?(coder: NSCoder) {
@@ -156,19 +156,93 @@ class ResponsesTableViewController: UITableViewController, ReachabilityObserverD
     }
     
     deinit {
-      removeReachabilityObserver()
+        removeReachabilityObserver()
     }
     
-     
+    
     //MARK: Reachability
     func reachabilityChanged(_ isReachable: Bool) {
-         if !isReachable {
-               showToast(message: "No internet connection.\n Sync Paused", seconds: ToastTime)
-         }else{
+        if !isReachable {
+            showToast(message: "No internet connection.\n Sync Paused", seconds: ToastTime)
+        }else{
             showToast(message: "Syncing Data...", seconds: ToastTime)
+            
+            //upload un-uploaded queries
+            let unsentQueries = getUnsentQueries()
+            if(!unsentQueries.isEmpty){
+                //start showing loading indicator
+                //show spinner here to only launch one instance since queries are multiple
+                self.showSpinner(onView: self.view)
+                uploadData(queries: unsentQueries, isMultiple: true)
+            }
         }
     }
-      
+    
+    var pos = 0
+    func uploadData(queries: [CustomQuery], isMultiple: Bool){
+        
+        // MARK: Alamofire manager
+        let manager = SessionManager.default
+        
+        _ = manager.rx
+            .request(.get, URL
+                //,parameters: ["email": john@doe.com, "password": "onlyjohnknowsme"]
+        )
+            .responseData()
+            .expectingObject(ofType: Welcome.self) // <-- specify what object is expected
+            .subscribe(onNext: { apiResult in
+                switch apiResult{
+                case let .success(succesResponse):
+                    // handling the successful response
+                    //write to database that response has been sent
+                    
+                    //if is single
+                    if(!isMultiple){
+                        switch(markSent(customQuery: queries[0])){
+                        case 1:
+                            self.tableView.reloadData()
+                            self.showToast(message: "Response uploaded successfully", seconds: ToastTime)
+                            break
+                        default:
+                            self.showToast(message: "Sorry.There seems to be a problem writing to the database", seconds: ToastTime)
+                            break
+                        }
+                        self.removeSpinner()
+                    }else{
+                        //if multiple
+                        if(self.pos < queries.count){
+                            switch(markSent(customQuery: queries[self.pos])){
+                            case 1:
+                                self.tableView.reloadData()
+                                self.showToast(message: "Responses uploaded successfully", seconds: ToastTime)
+                                break
+                            default:
+                                self.showToast(message: "Sorry.There seems to be a problem writing to the database", seconds: ToastTime)
+                                break
+                            }
+                            self.pos += 1
+                            self.uploadData(queries: queries, isMultiple: true)
+                        }else{
+                            //data is done uploading
+                            self.showToast(message: "Data Synced", seconds: ToastTime)
+                        }
+                    }
+                case let .failure(apiErrorMessage):
+                    // handling the erroneous response
+                    self.showToast(message: apiErrorMessage.error_message, seconds: ToastTime)
+                }
+                
+                //Stop showing loading indicator
+                self.removeSpinner()
+                
+            },onError:{ err in
+                //Stop showing loading indicator
+                self.removeSpinner()
+                print(err.localizedDescription)
+                // handle client originating error
+                self.showToast(message: "Check your internet connection", seconds: ToastTime)
+            })
+    }
     
     /*
      // Override to support rearranging the table view.
@@ -199,14 +273,14 @@ class ResponsesTableViewController: UITableViewController, ReachabilityObserverD
 
 extension ResponsesTableViewController {
     
-  func showToast(message: String, seconds: Double) {
-    let alert = UIAlertController(title: nil, message: message,
-      preferredStyle: .alert)
-    alert.view.backgroundColor = UIColor.black
-    alert.view.alpha = 0.6
-    alert.view.layer.cornerRadius = 15
-    present(alert, animated: true)
-    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + seconds, execute: {alert.dismiss(animated: true)})
+    func showToast(message: String, seconds: Double) {
+        let alert = UIAlertController(title: nil, message: message,
+                                      preferredStyle: .alert)
+        alert.view.backgroundColor = UIColor.black
+        alert.view.alpha = 0.6
+        alert.view.layer.cornerRadius = 15
+        present(alert, animated: true)
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + seconds, execute: {alert.dismiss(animated: true)})
     }
     
     func showSpinner(onView : UIView) {
@@ -230,54 +304,19 @@ extension ResponsesTableViewController {
             self.vSpinner = nil
         }
     }
-
-  }
+    
+}
 
 extension ResponsesTableViewController : ResponseTableViewCellDelegate {
     func responseTableViewCell(_ responseTableViewCell: ResponseTableViewCell, subscribeButtonTappedFor customQuery: CustomQuery) {
         
-        //start showing loading indicator
+        //upload the data on click
+        var queries = [CustomQuery]()
+        queries.append(customQuery)
+        //show spinner here to only launch one instance since queries are multiple
         self.showSpinner(onView: self.view)
-        
-        // MARK: Alamofire manager
-        let manager = SessionManager.default
 
-        _ = manager.rx
-        .request(.get, URL
-            //,parameters: ["email": john@doe.com, "password": "onlyjohnknowsme"]
-        )
-        .responseData()
-        .expectingObject(ofType: Welcome.self) // <-- specify what object is expected
-        .subscribe(onNext: { apiResult in
-            switch apiResult{
-            case let .success(succesResponse):
-                // handling the successful response
-                //write to database that response has been sent
-                switch(markSent(customQuery: customQuery)){
-                case 1:
-                    self.tableView.reloadData()
-                    self.showToast(message: "Uploaded successfully", seconds: ToastTime)
-                    break
-                default:
-                    self.showToast(message: "Sorry.There seems to be a problem writing to the database", seconds: ToastTime)
-                    break
-                }
-            case let .failure(apiErrorMessage):
-                // handling the erroneous response
-                self.showToast(message: apiErrorMessage.error_message, seconds: ToastTime)
-            }
-            
-            //Stop showing loading indicator
-            self.removeSpinner()
-            
-        },onError:{ err in
-            //Stop showing loading indicator
-            self.removeSpinner()
-            print(err.localizedDescription)
-            // handle client originating error
-            self.showToast(message: "Check your internet connection", seconds: ToastTime)
-        })
-        
+        uploadData(queries: queries, isMultiple: false)
     }
 }
 

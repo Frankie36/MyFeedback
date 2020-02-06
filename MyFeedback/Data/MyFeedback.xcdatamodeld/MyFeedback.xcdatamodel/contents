@@ -15,7 +15,7 @@
         <attribute name="passport" optional="YES" attributeType="String"/>
     </entity>
     <elements>
-        <element name="User" positionX="-54" positionY="-9" width="128" height="103"/>
         <element name="CustomQuery" positionX="-54" positionY="18" width="128" height="133"/>
+        <element name="User" positionX="-54" positionY="-9" width="128" height="103"/>
     </elements>
 </model>

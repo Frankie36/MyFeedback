@@ -2,6 +2,12 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:/Volumes/hdd2/IOS/MyFeedback/MyFeedback/Data/CustomQuery+CoreDataClass.swift">
+   </FileRef>
+   <FileRef
+      location = "group:/Volumes/hdd2/IOS/MyFeedback/MyFeedback/Data/CustomQuery+CoreDataProperties.swift">
+   </FileRef>
+   <FileRef
       location = "group:MyFeedback.xcodeproj">
    </FileRef>
    <FileRef

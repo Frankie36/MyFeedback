@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import RxAlamofire
 import Alamofire
+import CoreData
 
 private let appDelegate = UIApplication.shared.delegate as! AppDelegate
 private let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
@@ -18,7 +19,22 @@ func getQueries() -> [CustomQuery] {
     var queries = [CustomQuery]()
     do{ queries = try context.fetch(CustomQuery.fetchRequest())
     }catch let error as NSError {
-        print("Could not fetch users. \(error), \(error.userInfo)")
+        print("Could not fetch queries. \(error), \(error.userInfo)")
+    }
+    return queries
+}
+
+func getUnsentQueries() -> [CustomQuery] {
+    var queries = [CustomQuery]()
+    
+    let request = NSFetchRequest<CustomQuery>(entityName: "CustomQuery")
+    
+    //get data where sent = false
+    request.predicate = NSPredicate(format: "sent == %@", false)
+    
+    do{ queries = try context.fetch(request)
+    }catch let error as NSError {
+        print("Could not fetch queries. \(error), \(error.userInfo)")
     }
     return queries
 }
@@ -50,4 +66,3 @@ func markSent(customQuery:CustomQuery)->Int{
     }
     return statusCode
 }
-
