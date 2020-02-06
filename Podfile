@@ -6,8 +6,9 @@ target 'MyFeedback' do
   use_frameworks!
 
   # Pods for MyFeedback
-  pod 'Alamofire', '~> 4.8.2'
-
+pod 'RxAlamofire'
+    pod 'RxCocoa', '~> 5'
+  pod "RxSwift", "~> 5.0"
 
   target 'MyFeedbackTests' do
     inherit! :search_paths

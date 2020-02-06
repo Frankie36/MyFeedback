@@ -46,3 +46,4 @@ class ResponseTableViewCell: UITableViewCell {
 protocol ResponseTableViewCellDelegate: AnyObject {
     func responseTableViewCell(_ responseTableViewCell: ResponseTableViewCell, subscribeButtonTappedFor customQuery: CustomQuery)
 }
+

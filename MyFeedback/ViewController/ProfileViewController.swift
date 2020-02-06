@@ -22,6 +22,10 @@ class ProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+    
+        //make imageview circular
+        imgProfile.layer.masksToBounds = true
+        imgProfile.layer.cornerRadius = imgProfile.bounds.width / 2
     }
     
     override func viewWillAppear(_ animated: Bool) {

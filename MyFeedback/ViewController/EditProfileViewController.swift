@@ -27,6 +27,10 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     override func viewDidLoad() {
         super.viewDidLoad()
         imageName = String(getCurrentMillis()) + ".png"
+        
+        //make imageview circular
+        imgProfile.layer.masksToBounds = true
+        imgProfile.layer.cornerRadius = imgProfile.bounds.width / 2
     }
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {

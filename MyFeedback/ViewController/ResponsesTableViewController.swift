@@ -7,11 +7,16 @@
 //
 
 import UIKit
+import Alamofire
+import RxAlamofire
+import RxSwift
 
 class ResponsesTableViewController: UITableViewController {
     private let appDelegate = UIApplication.shared.delegate as! AppDelegate
     private let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     var responses = [CustomQuery]()
+    var vSpinner: UIView?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -94,8 +99,11 @@ class ResponsesTableViewController: UITableViewController {
         cell.btnSend.setTitleColor(.white, for: .normal)
         if(response.sent){
             cell.btnSend.isEnabled=false
+            cell.btnSend.titleLabel?.text = "Sent"
             cell.btnSend.backgroundColor = UIColor.green
         }else{
+            cell.btnSend.isEnabled=true
+            cell.btnSend.titleLabel?.text = "Send"
             cell.btnSend.backgroundColor = UIColor.red
         }
         
@@ -103,8 +111,7 @@ class ResponsesTableViewController: UITableViewController {
         cell.customQuery = response
         
         // the 'self' here means the view controller, set view controller as the delegate
-        cell.delegate = self as? ResponseTableViewCellDelegate
-
+        cell.delegate = self
         
         return cell
     }
@@ -113,25 +120,33 @@ class ResponsesTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     
     }
-    /*
+    
      // Override to support conditional editing of the table view.
      override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
      // Return false if you do not want the specified item to be editable.
      return true
      }
-     */
     
-    /*
+    
      // Override to support editing the table view.
      override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
      if editingStyle == .delete {
-     // Delete the row from the data source
-     tableView.deleteRows(at: [indexPath], with: .fade)
+        switch deleteResponse(position: indexPath.row) {
+        case 1:
+            // Remove item from existing list
+            responses.remove(at: indexPath.row)
+            // Delete the row from the data source
+            tableView.deleteRows(at: [indexPath], with: .fade)
+            showToast(message: "Response Deleted", seconds: ToastTime)
+        default:
+            showToast(message: "Response could't be deleted", seconds: ToastTime)
+        }
+        
      } else if editingStyle == .insert {
      // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
      }
      }
-     */
+     
     
     /*
      // Override to support rearranging the table view.
@@ -158,4 +173,129 @@ class ResponsesTableViewController: UITableViewController {
      }
      */
     
+}
+
+extension ResponsesTableViewController {
+    
+  func showToast(message: String, seconds: Double) {
+    let alert = UIAlertController(title: nil, message: message,
+      preferredStyle: .alert)
+    alert.view.backgroundColor = UIColor.black
+    alert.view.alpha = 0.6
+    alert.view.layer.cornerRadius = 15
+    present(alert, animated: true)
+    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + seconds, execute: {alert.dismiss(animated: true)})
+    }
+    
+    func showSpinner(onView : UIView) {
+        let spinnerView = UIView.init(frame: onView.bounds)
+        spinnerView.backgroundColor = UIColor.init(red: 0.5, green: 0.5, blue: 0.5, alpha: 0.5)
+        let ai = UIActivityIndicatorView.init(style: .whiteLarge)
+        ai.startAnimating()
+        ai.center = spinnerView.center
+        
+        DispatchQueue.main.async {
+            spinnerView.addSubview(ai)
+            onView.addSubview(spinnerView)
+        }
+        
+        vSpinner = spinnerView
+    }
+    
+    func removeSpinner() {
+        DispatchQueue.main.async {
+            self.vSpinner?.removeFromSuperview()
+            self.vSpinner = nil
+        }
+    }
+
+  }
+
+extension ResponsesTableViewController : ResponseTableViewCellDelegate {
+    func responseTableViewCell(_ responseTableViewCell: ResponseTableViewCell, subscribeButtonTappedFor customQuery: CustomQuery) {
+        
+        //start showing loading indicator
+        self.showSpinner(onView: self.view)
+        
+        // MARK: Alamofire manager
+        let manager = SessionManager.default
+
+        _ = manager.rx
+        .request(.get, URL
+            //,parameters: ["email": john@doe.com, "password": "onlyjohnknowsme"]
+        )
+        .responseData()
+        .expectingObject(ofType: Welcome.self) // <-- specify what object is expected
+        .subscribe(onNext: { apiResult in
+            switch apiResult{
+            case let .success(succesResponse):
+                // handling the successful response
+                //write to database that response has been sent
+                switch(markSent(customQuery: customQuery)){
+                case 1:
+                    self.tableView.reloadData()
+                    self.showToast(message: "Uploaded successfully", seconds: ToastTime)
+                    break
+                default:
+                    self.showToast(message: "Sorry.There seems to be a problem writing to the database", seconds: ToastTime)
+                    break
+                }
+            case let .failure(apiErrorMessage):
+                // handling the erroneous response
+                self.showToast(message: apiErrorMessage.error_message, seconds: ToastTime)
+            }
+            
+            //Stop showing loading indicator
+            self.removeSpinner()
+            
+        },onError:{ err in
+            //Stop showing loading indicator
+            self.removeSpinner()
+            print(err.localizedDescription)
+            // handle client originating error
+            self.showToast(message: "Check your internet connection", seconds: ToastTime)
+        })
+        
+    }
+}
+
+extension Observable where Element == (HTTPURLResponse, Data){
+    fileprivate func expectingObject<T : Codable>(ofType type: T.Type) -> Observable<ApiResult<T, ApiErrorMessage>>{
+        return self.map{ (httpURLResponse, data) -> ApiResult<T, ApiErrorMessage> in
+            switch httpURLResponse.statusCode{
+            case 200 ... 299:
+                // is status code is successful we can safely decode to our expected type T
+                let object = try JSONDecoder().decode(type, from: data)
+                return .success(object)
+            default:
+                // otherwise try
+                let apiErrorMessage: ApiErrorMessage
+                do{
+                    // to decode an expected error
+                    apiErrorMessage = try JSONDecoder().decode(ApiErrorMessage.self, from: data)
+                } catch _ {
+                    // or not. (this occurs if the API failed or doesn't return a handled exception)
+                    apiErrorMessage = ApiErrorMessage(error_message: "Server Error.")
+                }
+                return .failure(apiErrorMessage)
+            }
+        }
+    }
+}
+
+enum ApiResult<Value, Error>{
+    case success(Value)
+    case failure(Error)
+    
+    init(value: Value){
+        self = .success(value)
+    }
+    
+    init(error: Error){
+        self = .failure(error)
+    }
+}
+
+struct ApiErrorMessage: Codable{
+    var error_message: String
 }
