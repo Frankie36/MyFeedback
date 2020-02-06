@@ -28,6 +28,7 @@
 		4B3285DB23EB1A5F00481A96 /* ResponseTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B3285DA23EB1A5F00481A96 /* ResponseTableViewCell.swift */; };
 		4B3285E123EB1BCD00481A96 /* CustomQuery+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B3285DF23EB1BCD00481A96 /* CustomQuery+CoreDataClass.swift */; };
 		4B3285E423EB250000481A96 /* CustomQuery+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B3285E323EB250000481A96 /* CustomQuery+CoreDataProperties.swift */; };
+		4BA403F523EC8FF900ED41E6 /* ReachabilityObserverDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BA403F423EC8FF900ED41E6 /* ReachabilityObserverDelegate.swift */; };
 		4BD3830323EC15EB0041C702 /* SurveyRepo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD3830223EC15EB0041C702 /* SurveyRepo.swift */; };
 		4BD3830523EC1C420041C702 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD3830423EC1C420041C702 /* Constants.swift */; };
 		4BD3830723EC3F470041C702 /* RxAlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD3830623EC3F470041C702 /* RxAlamofireTests.swift */; };
@@ -85,6 +86,7 @@
 		4B3285DA23EB1A5F00481A96 /* ResponseTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseTableViewCell.swift; sourceTree = "<group>"; };
 		4B3285DF23EB1BCD00481A96 /* CustomQuery+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CustomQuery+CoreDataClass.swift"; sourceTree = "<group>"; };
 		4B3285E323EB250000481A96 /* CustomQuery+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CustomQuery+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		4BA403F423EC8FF900ED41E6 /* ReachabilityObserverDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReachabilityObserverDelegate.swift; sourceTree = "<group>"; };
 		4BD3830223EC15EB0041C702 /* SurveyRepo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SurveyRepo.swift; sourceTree = "<group>"; };
 		4BD3830423EC1C420041C702 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		4BD3830623EC3F470041C702 /* RxAlamofireTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RxAlamofireTests.swift; sourceTree = "<group>"; };
@@ -148,6 +150,7 @@
 		4B01B05823E8663E00BD33CD /* MyFeedback */ = {
 			isa = PBXGroup;
 			children = (
+				4BA403F323EC88DA00ED41E6 /* Utils */,
 				4BD3830823EC42C00041C702 /* Models */,
 				4B01B05923E8663E00BD33CD /* AppDelegate.swift */,
 				4B01B06723E8664200BD33CD /* Assets.xcassets */,
@@ -158,7 +161,6 @@
 				4B01B06123E8663E00BD33CD /* Main.storyboard */,
 				4B01B05B23E8663E00BD33CD /* SceneDelegate.swift */,
 				4B3285DC23EB1A7300481A96 /* ViewController */,
-				4BD3830223EC15EB0041C702 /* SurveyRepo.swift */,
 				4BD3830423EC1C420041C702 /* Constants.swift */,
 			);
 			path = MyFeedback;
@@ -186,6 +188,7 @@
 		4B0C5EB023E9CCC700660781 /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				4BD3830223EC15EB0041C702 /* SurveyRepo.swift */,
 				4B3285E323EB250000481A96 /* CustomQuery+CoreDataProperties.swift */,
 				4B3285DF23EB1BCD00481A96 /* CustomQuery+CoreDataClass.swift */,
 				4B0C5EB823E9CE4600660781 /* User+CoreDataClass.swift */,
@@ -215,6 +218,14 @@
 				4B2426A423E98B7300884573 /* SurveysTableViewController.swift */,
 			);
 			path = ViewController;
+			sourceTree = "<group>";
+		};
+		4BA403F323EC88DA00ED41E6 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				4BA403F423EC8FF900ED41E6 /* ReachabilityObserverDelegate.swift */,
+			);
+			path = Utils;
 			sourceTree = "<group>";
 		};
 		4BD3830823EC42C00041C702 /* Models */ = {
@@ -499,6 +510,7 @@
 				4B2426A323E9894000884573 /* EditProfileViewController.swift in Sources */,
 				4B3285DB23EB1A5F00481A96 /* ResponseTableViewCell.swift in Sources */,
 				4B3285E123EB1BCD00481A96 /* CustomQuery+CoreDataClass.swift in Sources */,
+				4BA403F523EC8FF900ED41E6 /* ReachabilityObserverDelegate.swift in Sources */,
 				4B2426A923E98C5300884573 /* EditResponseViewController.swift in Sources */,
 				4B3285D923EB1A4000481A96 /* SurveyTableViewCell.swift in Sources */,
 				4B0C5EBB23E9CE4600660781 /* User+CoreDataProperties.swift in Sources */,

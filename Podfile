@@ -4,19 +4,20 @@
 target 'MyFeedback' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
-
+  
   # Pods for MyFeedback
-pod 'RxAlamofire'
-    pod 'RxCocoa', '~> 5'
+  pod 'RxAlamofire'
+  pod 'RxCocoa', '~> 5'
   pod "RxSwift", "~> 5.0"
+  pod 'ReachabilitySwift'
 
   target 'MyFeedbackTests' do
     inherit! :search_paths
     # Pods for testing
   end
-
+  
   target 'MyFeedbackUITests' do
     # Pods for testing
   end
-
+  
 end

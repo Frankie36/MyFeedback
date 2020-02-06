@@ -11,12 +11,14 @@ import Alamofire
 import RxAlamofire
 import RxSwift
 
-class ResponsesTableViewController: UITableViewController {
+
+class ResponsesTableViewController: UITableViewController, ReachabilityObserverDelegate {
+    
     private let appDelegate = UIApplication.shared.delegate as! AppDelegate
     private let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     var responses = [CustomQuery]()
     var vSpinner: UIView?
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -146,7 +148,27 @@ class ResponsesTableViewController: UITableViewController {
      // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
      }
      }
+    
+    //MARK: Lifecycle
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        try? addReachabilityObserver()
+    }
+    
+    deinit {
+      removeReachabilityObserver()
+    }
+    
      
+    //MARK: Reachability
+    func reachabilityChanged(_ isReachable: Bool) {
+         if !isReachable {
+               showToast(message: "No internet connection.\n Sync Paused", seconds: ToastTime)
+         }else{
+            showToast(message: "Syncing Data...", seconds: ToastTime)
+        }
+    }
+      
     
     /*
      // Override to support rearranging the table view.
