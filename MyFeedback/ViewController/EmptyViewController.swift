@@ -20,6 +20,13 @@ class EmptyViewController: UIViewController {
         initData()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+           super.viewWillAppear(true)
+           DispatchQueue.main.async {
+               self.initData()
+           }
+       }
+    
     func initData(){
         //get survey data
         do{
