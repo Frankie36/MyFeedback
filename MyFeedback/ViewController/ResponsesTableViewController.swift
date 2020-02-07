@@ -99,13 +99,15 @@ class ResponsesTableViewController: UITableViewController, ReachabilityObserverD
         //add radius to the button
         cell.btnSend.layer.cornerRadius = 12
         cell.btnSend.setTitleColor(.white, for: .normal)
+        
+        cell.btnSend.setTitle("Sent", for: .disabled)
+        cell.btnSend.setTitle("Send", for: .normal)
+            
         if(response.sent){
             cell.btnSend.isEnabled=false
-            cell.btnSend.titleLabel?.text = "Sent"
             cell.btnSend.backgroundColor = UIColor.green
         }else{
             cell.btnSend.isEnabled=true
-            cell.btnSend.titleLabel?.text = "Send"
             cell.btnSend.backgroundColor = UIColor.red
         }
         
