@@ -58,6 +58,14 @@ class ResponsesTableViewController: UITableViewController, ReachabilityObserverD
                 //get survey data
                 do{
                     responses = try context.fetch(CustomQuery.fetchRequest())
+                    
+                    if(responses.isEmpty){
+                        let vc = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "vcEmptyController") as? EmptyViewController
+                        
+                        self.navigationController?.pushViewController(vc!, animated: true)
+
+                    }
+                    
                 }catch let error as NSError {
                     print("Could not fetch queries. \(error), \(error.userInfo)")
                 }
