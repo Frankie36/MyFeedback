@@ -66,3 +66,18 @@ func markSent(customQuery:CustomQuery)->Int{
     }
     return statusCode
 }
+
+func editQuery(title: String, date: Date, oldQuery:CustomQuery)->Int{
+ var statusCode: Int
+    do{
+        oldQuery.setValue(title, forKey: "title")
+        oldQuery.setValue(date, forKey: "date")
+        
+        try context.save()
+        statusCode = 1
+    }catch let error as NSError {
+        print("Could not update. \(error), \(error.userInfo)")
+        statusCode = 0
+    }
+    return statusCode
+}

@@ -9,15 +9,34 @@
 import UIKit
 
 class EditResponseViewController: UIViewController {
-    @IBOutlet weak var txtNewQuestion: UITextField!
+    @IBOutlet weak var txtNewQuestion: UITextView!
     
     private let appDelegate = UIApplication.shared.delegate as! AppDelegate
     private let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     var queryList = [CustomQuery]()
+    var response:CustomQuery?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
+        if(response != nil){
+            self.title = "Edit Question"
+            txtNewQuestion.text = response?.title
+            
+            //don't allow editing if is sent
+            if(response!.sent){
+                //disable text input
+                txtNewQuestion.isEditable = false
+                
+                //Disable done button
+                self.navigationItem.rightBarButtonItem?.isEnabled = false
+
+                
+                //display message to the user
+                showAlertController(title: "Hello There", message: "Sorry but you cannot edit a sent question")
+            }
+        }
     }
     
     @IBAction func submitOrUpdate(_ sender: Any) {
@@ -27,15 +46,29 @@ class EditResponseViewController: UIViewController {
         }
         // get the current date and time
         let currentDateTime = Date()
-
-        let query = CustomQuery(entity: CustomQuery.entity(), insertInto: context)
+        let title = txtNewQuestion.text
         
-        query.title = txtNewQuestion.text
-        query.date = currentDateTime
-        appDelegate.saveContext()
-        queryList.append(query)
+        //check if is an edit or new query
+        if(response==nil){
+            //add new query
+            let query = CustomQuery(entity: CustomQuery.entity(), insertInto: context)
+            
+            query.title = title
+            query.date = currentDateTime
+            appDelegate.saveContext()
+            queryList.append(query)
+            self.navigationController?.popViewController(animated: true)
+        } else {
+            //edit query
+            switch editQuery(title : title!, date: currentDateTime, oldQuery: response!) {
+            case 1:                self.navigationController?.popViewController(animated: true)
+                break
+            default:
+                showAlertController(title: "Error", message: "Couldn't edit content")
+                break
+            }
+        }
         
-        self.navigationController?.popViewController(animated: true)
     }
     
     private func showAlertController(title: String, message: String){
